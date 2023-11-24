@@ -48,21 +48,19 @@ public class Main {
     }
 
     private static double calculate(double num1, double num2, String operation) {
-        switch (operation) {
-            case "+":
-                return num1 + num2;
-            case "-":
-                return num1 - num2;
-            case "x":
-                return num1 * num2;
-            case "/":
+        return switch (operation) {
+            case "+" -> num1 + num2;
+            case "-" -> num1 - num2;
+            case "x" -> num1 * num2;
+            case "/" -> {
                 if (num2 != 0) {
-                    return num1 / num2;
+                    yield num1 / num2;
                 } else {
                     throw new ArithmeticException("It is not possible to divide by zero..");
                 }
-            default:
-                throw new IllegalArgumentException("Incorrect operation.");
-        }
+            }
+            default -> throw new IllegalArgumentException("Incorrect operation.");
+        };
     }
 }
+
