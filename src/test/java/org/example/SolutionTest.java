@@ -10,10 +10,10 @@ public class SolutionTest {
 
         String jewels = "aA";
         String stones = "aAAbbbb";
-        int expect = 3;
+        int expected = 3;
         int actual = solution.numJewelsInStones(jewels, stones);
 
-        Assert.assertEquals(expect, actual);
+        Assert.assertEquals(expected, actual);
     }
 
     @Test
@@ -21,10 +21,10 @@ public class SolutionTest {
         Solution solution = new Solution();
 
         int nums[] = {1, 2, 3, 1, 1, 3};
-        int expect = 4;
+        int expected = 4;
         int actual = solution.numIdenticalPairs(nums);
 
-        Assert.assertEquals(expect, actual);
+        Assert.assertEquals(expected, actual);
     }
 
     @Test
@@ -32,9 +32,9 @@ public class SolutionTest {
         Solution solution = new Solution();
 
         String text = "nlaebolko";
-        int expect = 1;
+        int expected = 1;
         int actual = solution.maxNumberOfBalloons(text);
 
-        Assert.assertEquals(expect, actual);
+        Assert.assertEquals(expected, actual);
     }
 }
