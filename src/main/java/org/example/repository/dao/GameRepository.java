@@ -9,5 +9,9 @@ public interface GameRepository {
 
     Game get(int id);
 
+    boolean remove(int id);
+
+    int update(Game game);
+
     List<Game> findAll();
 }
