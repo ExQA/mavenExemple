@@ -11,7 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class UserRepositoryImpl implements UserRepository {
-    private final Connection connection;
+    private Connection connection;
 
     private static final String SELECT_ALL = "SELECT * FROM users WHERE id = ?";
     private static final String SAVE =
@@ -39,13 +39,13 @@ public class UserRepositoryImpl implements UserRepository {
 
 
     public UserRepositoryImpl(Connection connection) {
-        this.connection = this.connection;
+        this.connection = connection;
     }
 
     @Override
     public User get(int id) {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL);
+            PreparedStatement preparedStatement = this.connection.prepareStatement(SELECT_ALL);
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             resultSet.next();
@@ -87,7 +87,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public boolean remove(int id) {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(REMOVE);
+            PreparedStatement preparedStatement = this.connection.prepareStatement(REMOVE);
             preparedStatement.setInt(1, id);
             return preparedStatement.execute();
         } catch (SQLException e) {
@@ -99,7 +99,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public int update(User user) {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(UPDATE);
+            PreparedStatement preparedStatement = this.connection.prepareStatement(UPDATE);
             preparedStatement.setString(1, user.getName());
             preparedStatement.setString(2, user.getNickname());
             preparedStatement.setDate(3, user.getBirthday());
@@ -131,7 +131,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public User findByNicknameAndPassword(String nickname, String password) {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_NICKNAME_AND_PASSWORD);
+            PreparedStatement preparedStatement = this.connection.prepareStatement(FIND_BY_NICKNAME_AND_PASSWORD);
             preparedStatement.setString(1, nickname);
             preparedStatement.setString(2, password);
             ResultSet resultSet = preparedStatement.executeQuery();

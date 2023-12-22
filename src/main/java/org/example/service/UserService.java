@@ -13,7 +13,7 @@ public class UserService {
     }
 
     public User registerNewUser(String name, String nickname, Date birthday, String password) {
-        // Checking unique user
+        // Перевірка унікальності псевдоніму
         if (userRepository.isNicknameUnique(nickname)) {
             User newUser = User.builder()
                     .name(name)
@@ -22,23 +22,23 @@ public class UserService {
                     .password(password)
                     .build();
 
-            // Saving the user
+            // Збереження користувача
             return userRepository.save(newUser);
         } else {
-            throw new IllegalArgumentException("Nickname is already in use");
+            throw new IllegalArgumentException("Псевдонім вже використовується");
         }
     }
 
     public User login(String nickname, String password) {
-        // ПChecking user and password
+        // Перевірка користувача та пароля
         User user = userRepository.findByNicknameAndPassword(nickname, password);
 
         if (user != null) {
-            // Successful login
+            // Успішний вхід
             return user;
         } else {
-            // Error
-            throw new IllegalArgumentException("Wring user or password");
+            // Помилка
+            throw new IllegalArgumentException("Неправильний користувач або пароль");
         }
     }
 }
