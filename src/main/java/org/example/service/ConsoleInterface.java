@@ -1,21 +1,26 @@
 package org.example.service;
 
 import org.example.config.DatabaseConnection;
+import org.example.model.Game;
 import org.example.model.User;
+import org.example.repository.GameRepositoryImpl;
 import org.example.repository.UserRepositoryImpl;
 
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Scanner;
 
 public class ConsoleInterface {
 
     private final Scanner scanner;
     private final UserService userService;
+    private final GameService gameService;
 
-    public ConsoleInterface(UserService userService) throws SQLException {
+    public ConsoleInterface(UserService userService, GameService gameService) throws SQLException {
         this.scanner = new Scanner(System.in);
         this.userService = userService;
+        this.gameService = gameService;
     }
 
     public void start() {
@@ -35,6 +40,12 @@ public class ConsoleInterface {
                 case "login":
                     loginUser();
                     break;
+                case "games":
+                    showAllGames();
+                    break;
+                case "addgame":
+                    addNewGame();
+                    break;
                 case "exit":
                     System.out.println("Дякуємо за використання додатку. До побачення!");
                     return;
@@ -49,6 +60,8 @@ public class ConsoleInterface {
         System.out.println("- help: вивести цю довідку");
         System.out.println("- register: зареєструвати нового користувача");
         System.out.println("- login: увійти до системи");
+        System.out.println("- games: вивести список усіх ігор");
+        System.out.println("- addgame: додати нову гру");
         System.out.println("- exit: вийти з програми");
     }
 
@@ -92,10 +105,39 @@ public class ConsoleInterface {
         }
     }
 
+    private void showAllGames() {
+        List<Game> games = gameService.getAllGames();
+        System.out.println("Список доступних ігор:");
+        games.forEach(game -> System.out.println(game));
+    }
+
+    private void addNewGame() {
+        System.out.println("Введіть дані для додавання нової гри.");
+
+        System.out.print("Назва: ");
+        String name = scanner.nextLine();
+
+        System.out.print("Дата випуску (рік-місяць-день): ");
+        Date releaseDate = Date.valueOf(scanner.nextLine());
+
+        System.out.print("Рейтинг: ");
+        float rating = Float.parseFloat(scanner.nextLine());
+
+        System.out.print("Вартість: ");
+        float cost = Float.parseFloat(scanner.nextLine());
+
+        System.out.print("Опис: ");
+        String description = scanner.nextLine();
+
+        Game newGame = gameService.addNewGame(name, releaseDate, rating, cost, description);
+        System.out.println("Гра " + newGame.getName() + " успішно додана.");
+    }
+
     public static void main(String[] args) {
         try {
             UserService userService = new UserService(new UserRepositoryImpl(DatabaseConnection.getConnection()));
-            ConsoleInterface consoleInterface = new ConsoleInterface(userService);
+            GameService gameService = new GameService(new GameRepositoryImpl(DatabaseConnection.getConnection()));
+            ConsoleInterface consoleInterface = new ConsoleInterface(userService, gameService);
             consoleInterface.start();
         } catch (SQLException e) {
             System.out.println("Помилка підключення до бази даних: " + e.getMessage());

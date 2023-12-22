@@ -13,5 +13,4 @@ public class User {
     private String nickname;
     private Date birthday;
     private String password;
-
 }
