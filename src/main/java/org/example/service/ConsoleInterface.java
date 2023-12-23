@@ -31,26 +31,13 @@ public class ConsoleInterface {
             String command = scanner.nextLine().trim();
 
             switch (command.toLowerCase()) {
-                case "help":
-                    printHelp();
-                    break;
-                case "register":
-                    registerUser();
-                    break;
-                case "login":
-                    loginUser();
-                    break;
-                case "games":
-                    showAllGames();
-                    break;
-                case "addgame":
-                    addNewGame();
-                    break;
-                case "exit":
-                    System.out.println("Дякуємо за використання додатку. До побачення!");
-                    return;
-                default:
-                    System.out.println("Невідома команда. Введіть 'help' для перегляду доступних команд.");
+                case "help" -> printHelp();
+                case "register" -> registerUser();
+                case "login" -> loginUser();
+                case "games" -> showAllGames();
+                case "addgame" -> addNewGame();
+                case "exit" -> exit();
+                default -> System.out.println("Невідома команда. Введіть 'help' для перегляду доступних команд.");
             }
         }
     }
@@ -63,6 +50,15 @@ public class ConsoleInterface {
         System.out.println("- games: вивести список усіх ігор");
         System.out.println("- addgame: додати нову гру");
         System.out.println("- exit: вийти з програми");
+    }
+
+    private void exit() {
+        try {
+            DatabaseConnection.getConnection().close();
+            System.out.println("Дякуємо за використання додатку. До побачення!");
+        } catch (SQLException e) {
+            System.out.println("Помилка при закритті з'єднання: " + e.getMessage());
+        }
     }
 
     private void registerUser() {
