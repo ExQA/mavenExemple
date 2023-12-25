@@ -14,4 +14,10 @@ public interface GameRepository {
     int update(Game game);
 
     List<Game> findAll();
+
+    List<Game> findAllUserGames(int userId);
+
+    Game findByName(String gameName);
+
+    boolean buyGame(int userId, int gameId);
 }

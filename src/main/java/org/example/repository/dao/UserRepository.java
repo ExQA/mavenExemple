@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface UserRepository {
 
+
     User get(int id);
 
     User save(User user);
@@ -17,6 +18,8 @@ public interface UserRepository {
     boolean isNicknameUnique(String nickname);
 
     User findByNicknameAndPassword(String nickname, String password);
+
+    User findByNickname(String nickname);
 
     List<User> findAll();
 }

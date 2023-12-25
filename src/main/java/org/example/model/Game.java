@@ -11,7 +11,7 @@ public class Game {
     private int id;
     private String name;
     private Date releaseDate;
-    private float rating;
-    private float cost;
+    private double rating;
+    private double cost;
     private String description;
 }

@@ -17,6 +17,19 @@ public class GameService {
         return gameRepository.findAll();
     }
 
+    public boolean buyGame(int userId, int gameId) {
+        return gameRepository.buyGame(userId, gameId);
+    }
+
+
+    public List<Game> findAllUserGames(int userId) {
+        return gameRepository.findAllUserGames(userId);
+    }
+
+    public Game findByName(String gameName) {
+        return gameRepository.findByName(gameName);
+    }
+
     public Game addNewGame(String name, Date releaseDate, float rating, float cost, String description) {
         Game newGame = Game.builder()
                 .name(name)
