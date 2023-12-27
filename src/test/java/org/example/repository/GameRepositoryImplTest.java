@@ -1,21 +1,24 @@
 package org.example.repository;
 
 import org.example.model.Game;
+import org.example.model.User;
 import org.junit.*;
 
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
-import java.time.Instant;
+import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class GameRepositoryImplTest {
 
     private static Connection connection;
-    private static  GameRepositoryImpl gameRepository;
+    private static GameRepositoryImpl gameRepository;
+    private static UserRepositoryImpl userRepository;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -54,7 +57,7 @@ public class GameRepositoryImplTest {
     }
 
     @Test
-    public void saveAndGetById() {
+    public void testSaveAndGetById() {
         Game newGame = Game.builder()
                 .name("name")
                 .releaseDate(Date.valueOf("2000-11-12"))
@@ -72,8 +75,37 @@ public class GameRepositoryImplTest {
     }
 
     @Test
-    public void buyGame() {
-        // todo
+    public void testBuyGame() {
+
+        User user = User.builder()
+                .name("Unit")
+                .nickname("Nick")
+                .birthday(Date.valueOf("2000-11-12"))
+                .password("password")
+                .amount(0)
+                .build();
+        int userID = userRepository.save(user).getId();
+        System.out.println(user);
+
+
+        Game newGame = Game.builder()
+                .name("name")
+                .releaseDate(Date.valueOf("2000-11-12"))
+                .rating(2.4)
+                .cost(31.99)
+                .description("some desc")
+                .build();
+
+        int gameId = gameRepository.save(newGame).getId();
+        System.out.println(newGame);
+
+        assertTrue(gameRepository.buyGame(userID, gameId));
+
     }
 
+    @Test
+    public void findAll() {
+        List<Game> result = gameRepository.findAll();
+        assertEquals(3, result.size());
+    }
 }

@@ -27,7 +27,7 @@ public class ConsoleInterface {
     }
 
     public void start() {
-        System.out.println("Ласкаво просимо! Введіть команду або 'help' для отримання довідки.");
+        System.out.println("Welcome! Type the command or 'help' for support.");
 
         while (true) {
             System.out.print("> ");
@@ -44,72 +44,72 @@ public class ConsoleInterface {
                 case "credit" -> credit();
                 case "info" -> info();
                 case "exit" -> exit();
-                default -> System.out.println("Невідома команда. Введіть 'help' для перегляду доступних команд.");
+                default -> System.out.println("Unknown command. Enter 'help' to view available commands");
             }
         }
     }
 
     private void printHelp() {
-        System.out.println("Доступні команди:");
-        System.out.println("- help: вивести цю довідку");
-        System.out.println("- register: зареєструвати нового користувача");
-        System.out.println("- login: увійти до системи");
+        System.out.println("Available commands: ");
+        System.out.println("- help: display this help");
+        System.out.println("- register: register a new user");
+        System.out.println("- login: log in to the system");
         System.out.println("- logout: log out");
-        System.out.println("- games: вивести список усіх ігор");
-        System.out.println("- addgame: додати нову гру");
-        System.out.println("- credit: попонить счет");
-        System.out.println("- purchase: покупка игры");
-        System.out.println("- exit: вийти з програми");
+        System.out.println("- games: display a list of all games");
+        System.out.println("- addgame: add new game");
+        System.out.println("- credit: top up your account");
+        System.out.println("- purchase: buying a game");
+        System.out.println("- exit: exit from the program");
     }
 
     private void exit() {
         try {
             DatabaseConnection.getConnection().close();
-            System.out.println("Дякуємо за використання додатку. До побачення!");
+            System.out.println("Thank you for using the application. Goodbye!");
             System.exit(0);
         } catch (SQLException e) {
-            System.out.println("Помилка при закритті з'єднання: " + e.getMessage());
+            System.out.println("Error closing connection: " + e.getMessage());
         }
     }
 
     private void registerUser() {
-        System.out.println("Введіть дані для реєстрації нового користувача.");
+        System.out.println("Enter data to register a new user.");
 
-        System.out.print("Ім'я: ");
+        System.out.print("Name: ");
         String name = scanner.nextLine();
 
-        System.out.print("Нікнейм: ");
+        System.out.print("Nickname: ");
         String nickname = scanner.nextLine();
 
-        System.out.print("Дата народження (рік-місяць-день): ");
+        System.out.print("Date of birth (year-month-day): ");
         Date birthday = Date.valueOf(scanner.nextLine());
 
-        System.out.print("Пароль: ");
+        System.out.print("Password: ");
         String password = scanner.nextLine();
 
         try {
             User newUser = userService.registerNewUser(name, nickname, birthday, password);
-            System.out.println("Користувач зареєстрований: " + newUser);
+            System.out.println("The user is registered: " + newUser);
         } catch (IllegalArgumentException e) {
-            System.out.println("Помилка при реєстрації: " + e.getMessage());
+            System.out.println("Error during registration: " + e.getMessage());
         }
     }
 
     private void loginUser() {
-        System.out.println("Введіть дані для входу в систему.");
+        System.out.println("Enter your login credentials.");
 
-        System.out.print("Нікнейм: ");
+        System.out.print("Nickname: ");
         String nickname = scanner.nextLine();
 
-        System.out.print("Пароль: ");
+        System.out.print("Password: ");
         String password = scanner.nextLine();
 
         try {
             User loggedInUser = userService.login(nickname, password);
-            System.out.println("Користувач увійшов в систему: " + loggedInUser);
+            System.out.println("The user is logged in: " + loggedInUser);
             currentUser = loggedInUser;
         } catch (IllegalArgumentException e) {
-            System.out.println("Помилка входу: " + e.getMessage());
+            System.out.println("Login error: " + e.getMessage());
         }
     }
 
@@ -127,7 +127,7 @@ public class ConsoleInterface {
 
     private void showAllGames() {
         List<Game> games = gameService.getAllGames();
-        System.out.println("Список доступних ігор:");
+        System.out.println("List of available games: ");
         games.forEach(game -> System.out.println(game));
     }
 
@@ -176,29 +176,29 @@ public class ConsoleInterface {
             return;
         }
         userService.buyGame(currentUser, game);
-        System.out.println(""); // todo add message
+        System.out.println("The " + game.getName() + "is purchased!");
     }
 
     private void addNewGame() {
-        System.out.println("Введіть дані для додавання нової гри.");
+        System.out.println("Enter data to add a new game.");
 
-        System.out.print("Назва: ");
+        System.out.print("Name of the game: ");
         String name = scanner.nextLine();
 
-        System.out.print("Дата випуску (рік-місяць-день): ");
+        System.out.print("Release date (year-month-day): ");
         Date releaseDate = Date.valueOf(scanner.nextLine());
 
-        System.out.print("Рейтинг: ");
+        System.out.print("Rating: ");
         float rating = Float.parseFloat(scanner.nextLine());
 
-        System.out.print("Вартість: ");
+        System.out.print("Price: ");
         float cost = Float.parseFloat(scanner.nextLine());
 
-        System.out.print("Опис: ");
+        System.out.print("Description: ");
         String description = scanner.nextLine();
 
         Game newGame = gameService.addNewGame(name, releaseDate, rating, cost, description);
-        System.out.println("Гра " + newGame.getName() + " успішно додана.");
+        System.out.println("Game " + newGame.getName() + " successfully added.");
     }
 
     public static void main(String[] args) {
@@ -209,7 +209,7 @@ public class ConsoleInterface {
             ConsoleInterface consoleInterface = new ConsoleInterface(userService, gameService);
             consoleInterface.start();
         } catch (SQLException e) {
-            System.out.println("Помилка підключення до бази даних: " + e.getMessage());
+            System.out.println("Database connection error: " + e.getMessage());
         }
     }
 }

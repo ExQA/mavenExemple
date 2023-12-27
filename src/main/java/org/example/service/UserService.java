@@ -45,14 +45,14 @@ public class UserService {
 
             return userRepository.save(newUser);
         } else {
-            throw new IllegalArgumentException("Псевдонім вже використовується");
+            throw new IllegalArgumentException("Nickname is already used");
         }
     }
 
     public User login(String nickname, String password) {
         User user = userRepository.findByNicknameAndPassword(nickname, password);
         if (user == null) {
-            throw new IllegalArgumentException("Неправильний користувач або пароль");
+            throw new IllegalArgumentException("Invalid user or password");
         }
         user.setGames(gameService.findAllUserGames(user.getId()));
         return user;

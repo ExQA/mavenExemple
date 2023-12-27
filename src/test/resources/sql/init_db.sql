@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS users
 
 CREATE TABLE IF NOT EXISTS games
 (
-    id           integer AUTO_INCREMENT primary key ,
+    id           integer AUTO_INCREMENT primary key,
     name         varchar(255),
     release_date date,
     rating       numeric(10, 2),
