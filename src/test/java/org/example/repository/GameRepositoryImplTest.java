@@ -26,6 +26,7 @@ public class GameRepositoryImplTest {
         connection = DriverManager.getConnection("jdbc:h2:mem:test;MODE=MySQL;DB_CLOSE_DELAY=-1");
         executeScript("init_db");
         gameRepository = new GameRepositoryImpl(connection);
+        userRepository = new UserRepositoryImpl(connection);
     }
 
     private static void executeScript(String script) throws Exception {
@@ -68,10 +69,9 @@ public class GameRepositoryImplTest {
 
         int savedId = gameRepository.save(newGame).getId();
 
-        Game fromDb = gameRepository.get(savedId);
+        Game gameFromDb = gameRepository.get(savedId);
 
-        assertEquals(newGame, fromDb);
-
+        assertEquals(newGame, gameFromDb);
     }
 
     @Test
@@ -85,8 +85,6 @@ public class GameRepositoryImplTest {
                 .amount(0)
                 .build();
         int userID = userRepository.save(user).getId();
-        System.out.println(user);
-
 
         Game newGame = Game.builder()
                 .name("name")
@@ -97,10 +95,8 @@ public class GameRepositoryImplTest {
                 .build();
 
         int gameId = gameRepository.save(newGame).getId();
-        System.out.println(newGame);
 
         assertTrue(gameRepository.buyGame(userID, gameId));
-
     }
 
     @Test
