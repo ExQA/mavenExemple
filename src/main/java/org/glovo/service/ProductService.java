@@ -1,42 +1,31 @@
 package org.glovo.service;
 
+import lombok.AllArgsConstructor;
 import org.glovo.model.Product;
+import org.glovo.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class ProductService {
-    private final List<Product> products = new ArrayList<>();
+
+    private final ProductRepository repository;
 
     public List<Product> getAllProducts() {
-        return new ArrayList<>(products);
+        return repository.findAll();
     }
 
-    public Product getProductById(long productId) {
-        return products.stream()
-                .filter(product -> product.getId() == productId)
-                .findFirst()
-                .orElse(null);
+    public Product getProduct(long productId) {
+        return repository.getReferenceById(productId);
     }
 
-    public Product createProduct(Product product) {
-        products.add(product);
-        return product;
+    public Product create(Product product) {
+        return repository.save(product);
     }
 
-    public Product updateProduct(long productId, Product updatedProduct) {
-        Product existingProduct = getProductById(productId);
-        if (existingProduct != null) {
-            existingProduct.setName(updatedProduct.getName());
-            existingProduct.setPrice(updatedProduct.getPrice());
-            existingProduct.setCount(updatedProduct.getCount());
-        }
-        return existingProduct;
-    }
-
-    public void deleteProduct(long productId) {
-        products.removeIf(product -> product.getId() == productId);
+    public void delete(long productId) {
+        repository.deleteById(productId);
     }
 }

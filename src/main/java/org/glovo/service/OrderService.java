@@ -1,74 +1,69 @@
 package org.glovo.service;
 
-import org.glovo.model.Order;
+import lombok.AllArgsConstructor;
+import org.glovo.model.GlovoOrder;
 import org.glovo.model.Product;
+import org.glovo.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 
 @Service
+@AllArgsConstructor
 public class OrderService {
 
-    private final List<Order> orders = new ArrayList<>();
+    private final OrderRepository orderRepository;
+    private final ProductService productService;
+    private List<Product> products;
 
-    public List<Order> getAllOrders() {
-        return new ArrayList<>(orders);
+    public List<GlovoOrder> getAllOrders() {
+        return orderRepository.findAll();
     }
 
-    public Order getOrderById(String orderId) {
-        return orders.stream()
-                .filter(order -> order.getId().equals(orderId))
-                .findFirst()
-                .orElse(null);
+    public GlovoOrder getById(long orderId) {
+        return orderRepository.getReferenceById(orderId);
     }
 
-    public Order createOrder(Order order) {
-        order.setId(generateOrderId());
+    public GlovoOrder create(GlovoOrder order) {
         order.setCreation(new Date());
-        orders.add(order);
-        return order;
+        order.setTotalPrice(calculateTotalPrice());
+        return orderRepository.save(order);
     }
 
-    public Order updateOrder(String orderId, Order updatedOrder) {
-        Order existingOrder = getOrderById(orderId);
+    public GlovoOrder update(long orderId, GlovoOrder updatedOrder) {
+        GlovoOrder existingOrder = getById(orderId);
         if (existingOrder != null) {
             existingOrder.setProducts(updatedOrder.getProducts());
             existingOrder.setModification(new Date());
+            orderRepository.save(existingOrder);
         }
         return existingOrder;
     }
 
-    public void deleteOrder(String orderId) {
-        orders.removeIf(order -> order.getId().equals(orderId));
+    public void delete(long orderId) {
+       orderRepository.deleteById(orderId);
     }
 
-    public Order addItemToOrder(String orderId, Product newItem) {
-        Order order = getOrderById(orderId);
-        if (order != null) {
-            order.getProducts().add(newItem);
-            updateOrder(orderId, order);
-            return order;
-        } else {
-            return null;
+    public GlovoOrder addProduct(long orderId, long itemId) {
+        GlovoOrder order = orderRepository.getReferenceById(orderId);
+        Product newProduct = productService.getProduct(itemId);
+        order.getProducts().add(newProduct);
+        return orderRepository.save(order);
+    }
+
+    public GlovoOrder removeProduct(long orderId, long itemId) {
+        GlovoOrder order = orderRepository.getReferenceById(orderId);
+        order.getProducts().removeIf(p -> p.getId() == itemId);
+        return orderRepository.save(order);
+    }
+
+    public double calculateTotalPrice() {
+        double totalPrice = 0.0;
+        for (Product product : products) {
+            totalPrice += product.getPrice();
         }
-    }
-
-    public Order removeItemFromOrder(String orderId, long itemId) {
-        Order order = getOrderById(orderId);
-        if (order != null) {
-            order.getProducts().removeIf(product -> product.getId() == itemId);
-            updateOrder(orderId, order);
-            return order;
-        } else {
-            return null;
-        }
-    }
-
-    private String generateOrderId() {
-        return UUID.randomUUID().toString();
+        return totalPrice;
     }
 }
