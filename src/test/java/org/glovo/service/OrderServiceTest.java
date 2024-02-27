@@ -3,7 +3,6 @@ package org.glovo.service;
 import org.glovo.entity.GlovoOrder;
 import org.glovo.entity.Product;
 import org.glovo.repository.OrderRepository;
-import org.glovo.repository.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
@@ -23,8 +22,21 @@ import static org.mockito.Mockito.*;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class OrderServiceTest {
 
-    @Mock
-    private ProductRepository productRepository;
+    private Product product1;
+    private Product product2;
+    private Product product3;
+    private List<Product> products;
+
+    public OrderServiceTest() {
+        product1 = new Product(1, "apple", 12.12, 2);
+        product2 = new Product(2, "nuts", 12, 2);
+        product3 = new Product(3, "banana", 12, 2);
+
+        products = new ArrayList<>();
+        products.add(product1);
+        products.add(product2);
+        products.add(product3);
+    }
 
     @Mock
     private OrderRepository orderRepository;
@@ -39,18 +51,10 @@ public class OrderServiceTest {
 
     @Test
     public void testGetAllOrders() {
-        Product product1 = new Product(1, "apple", 12.12, 2);
-        Product product2 = new Product(2, "apple", 12, 2);
-        Product product3 = new Product(3, "apple", 12, 2);
-
-        ArrayList<Product> products = new ArrayList<>();
-        products.add(product1);
-        products.add(product2);
-        products.add(product3);
 
         GlovoOrder order1 = new GlovoOrder(1, products, 36.12, 3, new Date(), null);
-        GlovoOrder order2 = new GlovoOrder(1, products, 36.12, 3, new Date(), null);
-        GlovoOrder order3 = new GlovoOrder(1, products, 36.12, 3, new Date(), null);
+        GlovoOrder order2 = new GlovoOrder(2, products, 36.12, 3, new Date(), null);
+        GlovoOrder order3 = new GlovoOrder(3, products, 36.12, 3, new Date(), null);
 
         ArrayList<GlovoOrder> expectedOrders = new ArrayList<>();
         expectedOrders.add(order1);
@@ -65,19 +69,11 @@ public class OrderServiceTest {
     }
 
     @Test
-    void getByIdTest() {
-        Product product1 = new Product(1, "apple", 12.12, 2);
-        Product product2 = new Product(2, "apple", 12, 2);
-        Product product3 = new Product(3, "apple", 12, 2);
-
-        ArrayList<Product> products = new ArrayList<>();
-        products.add(product1);
-        products.add(product2);
-        products.add(product3);
+    void testGetOrderById() {
 
         GlovoOrder order1 = new GlovoOrder(1, products, 36.12, 3, new Date(), null);
-        GlovoOrder order2 = new GlovoOrder(1, products, 36.12, 3, new Date(), null);
-        GlovoOrder order3 = new GlovoOrder(1, products, 36.12, 3, new Date(), null);
+        GlovoOrder order2 = new GlovoOrder(2, products, 36.12, 3, new Date(), null);
+        GlovoOrder order3 = new GlovoOrder(3, products, 36.12, 3, new Date(), null);
 
         ArrayList<GlovoOrder> expectedOrders = new ArrayList<>();
         expectedOrders.add(order1);
@@ -86,22 +82,12 @@ public class OrderServiceTest {
 
         Mockito.when(orderRepository.getReferenceById(1L)).thenReturn(expectedOrders.get(1));
 
-        GlovoOrder actualdOrder = orderService.getById(1L);
-        assertEquals(expectedOrders.get(1), actualdOrder);
+        GlovoOrder actualIdOrder = orderService.getById(1L);
+        assertEquals(expectedOrders.get(1), actualIdOrder);
     }
 
     @Test
-    void createTest() {
-
-        Product product1 = new Product(1, "apple", 12.12, 2);
-        Product product2 = new Product(2, "apple", 12, 2);
-        Product product3 = new Product(3, "apple", 12, 2);
-
-        ArrayList<Product> products = new ArrayList<>();
-        products.add(product1);
-        products.add(product2);
-        products.add(product3);
-
+    void testCreateOrder() {
         GlovoOrder orderOriginal = new GlovoOrder(0, products, 0, 0, null, null);
         GlovoOrder expectedOrder = new GlovoOrder(1, products, 36.12, 3, new Date(), null);
 
@@ -118,31 +104,19 @@ public class OrderServiceTest {
 
     @Test
     public void testUpdateOrder() {
-        Product product1 = new Product(1, "apple", 12.12, 2);
-        Product product2 = new Product(2, "nuts", 12, 2);
-        Product product3 = new Product(3, "banana", 12, 2);
-
-        ArrayList<Product> products = new ArrayList<>();
-        products.add(product1);
-        products.add(product2);
-        products.add(product3);
-
         ArrayList<Product> products2 = new ArrayList<>();
         products2.add(product1);
         products2.add(product2);
 
         GlovoOrder existingOrder = new GlovoOrder(1L, products, 36.12, 3, null, null);
-        GlovoOrder updatedOrder = new GlovoOrder(1L, products2, 24.12, 2, null, null);
+        GlovoOrder expectedOrder = new GlovoOrder(1L, products2, 24.12, 2, null, null);
 
-        // Set up the mock behavior
         when(orderRepository.getById(1L)).thenReturn(existingOrder);
         when(orderRepository.save(any(GlovoOrder.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        // Call the method to be tested
-        GlovoOrder result = orderService.update(1, updatedOrder);
+        GlovoOrder actualOrder = orderService.update(1, expectedOrder);
 
-        // Verify the result
-        assertEquals(updatedOrder, result);
+        assertEquals(expectedOrder, actualOrder);
         verify(orderRepository, times(1)).getById(1L);
         verify(orderRepository, times(1)).save(any(GlovoOrder.class));
     }
@@ -155,45 +129,35 @@ public class OrderServiceTest {
 
     @Test
     public void testAddProductToOrder() {
-
         Product product = new Product(1, "apple", 12.12, 2);
         ArrayList<Product> products = new ArrayList<>();
         products.add(product);
 
-        GlovoOrder order = new GlovoOrder(1L, products, 36.12, 3, null, null);
+        GlovoOrder expectedOrder = new GlovoOrder(1L, products, 36.12, 3, null, null);
 
-        when(orderRepository.getReferenceById(1L)).thenReturn(order);
+        when(orderRepository.getReferenceById(1L)).thenReturn(expectedOrder);
         when(productService.getProduct(1)).thenReturn(product);
-        when(orderRepository.save(order)).thenReturn(order);
+        when(orderRepository.save(expectedOrder)).thenReturn(expectedOrder);
 
-        GlovoOrder result = orderService.addProduct(1, 1);
+        GlovoOrder actualOrder = orderService.addProduct(1, 1);
 
-        assertEquals(order, result);
+        assertEquals(expectedOrder, actualOrder);
         verify(orderRepository, times(1)).getReferenceById(1L);
         verify(productService, times(1)).getProduct(1);
-        verify(orderRepository, times(1)).save(order);
+        verify(orderRepository, times(1)).save(expectedOrder);
     }
 
     @Test
     public void testRemoveProductFromOrder() {
-        Product product1 = new Product(1, "apple", 12.12, 2);
-        Product product2 = new Product(2, "apple", 12, 2);
-        Product product3 = new Product(3, "apple", 12, 2);
+        GlovoOrder expectedOrder = new GlovoOrder(1L, products, 36.12, 3, null, null);
 
-        ArrayList<Product> products = new ArrayList<>();
-        products.add(product1);
-        products.add(product2);
-        products.add(product3);
+        when(orderRepository.getReferenceById(1L)).thenReturn(expectedOrder);
+        when(orderRepository.save(expectedOrder)).thenReturn(expectedOrder);
 
-        GlovoOrder order = new GlovoOrder(1L, products, 36.12, 3, null, null);
+        GlovoOrder actualOrder = orderService.removeProduct(1, 1);
 
-        when(orderRepository.getReferenceById(1L)).thenReturn(order);
-        when(orderRepository.save(order)).thenReturn(order);
-
-        GlovoOrder result = orderService.removeProduct(1, 1);
-
-        assertEquals(order, result);
+        assertEquals(expectedOrder, actualOrder);
         verify(orderRepository, times(1)).getReferenceById(1L);
-        verify(orderRepository, times(1)).save(order);
+        verify(orderRepository, times(1)).save(expectedOrder);
     }
 }
