@@ -1,7 +1,7 @@
 package org.glovo.controller;
 
 import lombok.AllArgsConstructor;
-import org.glovo.model.GlovoOrder;
+import org.glovo.entity.GlovoOrder;
 import org.glovo.service.OrderService;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,17 +1,17 @@
 package org.glovo.service;
 
-import lombok.AllArgsConstructor;
-import org.glovo.model.Product;
+import org.glovo.entity.Product;
 import org.glovo.repository.ProductRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@AllArgsConstructor
 public class ProductService {
 
-    private final ProductRepository repository;
+    @Autowired
+    private ProductRepository repository;
 
     public List<Product> getAllProducts() {
         return repository.findAll();
